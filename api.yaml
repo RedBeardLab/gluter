@@ -1,0 +1,580 @@
+---
+openapi: 3.0.2
+info:
+  title: Gluter
+  description: API for user management
+  version: 1.0.0
+paths:
+  /users:
+    summary: Path used to manage the list of users.
+    description: The REST endpoint/path used to list and create zero or more `user`
+      entities.  This path contains a `GET` and `POST` operation to perform the list
+      and create tasks, respectively.
+    get:
+      summary: List All users
+      description: Gets a list of all `user` entities.
+      operationId: getusers
+      responses:
+        200:
+          description: Successful response - returns an array of `user` entities.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a user
+      description: Creates a new instance of a `user`.
+      operationId: createuser
+      requestBody:
+        description: A new `user` to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        201:
+          description: Successful response.
+  /users/{userId}:
+    summary: Path used to manage a single user.
+    description: The REST endpoint/path used to get, update, and delete single instances
+      of an `user`.  This path contains `GET`, `PUT`, and `DELETE` operations used
+      to perform the get, update, and delete tasks, respectively.
+    get:
+      summary: Get a user
+      description: Gets the details of a single instance of a `user`.
+      operationId: getuser
+      responses:
+        200:
+          description: Successful response - returns a single `user`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: The user is not found
+    put:
+      summary: Update a user
+      description: Updates an existing `user`.
+      operationId: updateuser
+      requestBody:
+        description: Updated `user` information.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        202:
+          description: Successful response.
+    delete:
+      summary: Delete a user
+      description: Deletes an existing `user`.
+      operationId: deleteuser
+      responses:
+        204:
+          description: Successful response.
+    head:
+      summary: Check that a user exists
+      description: Quickly check if an user exists
+      operationId: headuser
+      responses:
+        204:
+          description: The user exists
+        404:
+          description: The user is not found
+    parameters:
+    - name: userId
+      in: path
+      description: A unique identifier for a `user`.
+      required: true
+      schema:
+        type: string
+  /users/email/{email}/:
+    description: The endpoint is useful to check if an user actually exists
+    get:
+      summary: Return an user by email
+      description: Return the user by email
+      operationId: getuserbyemail
+      responses:
+        200:
+          description: The found user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: No user found
+    head:
+      summary: Check that an user exists by email
+      operationId: headuserbyemail
+      responses:
+        204:
+          description: The user exists
+        404:
+          description: No user found
+    parameters:
+    - name: email
+      in: path
+      description: The user email to check
+      required: true
+      schema:
+        type: string
+  /sessions:
+    summary: Path used to manage the list of Sessions.
+    description: The REST endpoint/path used to list and create zero or more `Session`
+      entities.  This path contains a `GET` and `POST` operation to perform the list
+      and create tasks, respectively.
+    get:
+      summary: List All Sessions
+      description: Gets a list of all `Session` entities.
+      operationId: getSessions
+      responses:
+        200:
+          description: Successful response - returns an array of `Session` entities.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Session'
+    post:
+      summary: Create a Session
+      description: |-
+        Creates a new instance of a `Session`.
+
+        It may be a LogIn operation, or you can let the user invoke the `/login` endpoint.
+      operationId: createSession
+      requestBody:
+        description: A new `Session` to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Session'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Session'
+        required: true
+      responses:
+        201:
+          description: Successful response.
+      security:
+      - {}
+  /sessions/{sessionId}:
+    summary: Path used to manage a single Session.
+    description: The REST endpoint/path used to get, update, and delete single instances
+      of an `Session`.  This path contains `GET`, `PUT`, and `DELETE` operations used
+      to perform the get, update, and delete tasks, respectively.
+    get:
+      summary: Get a Session
+      description: Gets the details of a single instance of a `Session`.
+      operationId: getSession
+      responses:
+        200:
+          description: Successful response - returns a single `Session`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+    put:
+      summary: Update a Session
+      description: Updates an existing `Session`.
+      operationId: updateSession
+      requestBody:
+        description: Updated `Session` information.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Session'
+        required: true
+      responses:
+        202:
+          description: Successful response.
+    delete:
+      summary: Delete a Session
+      description: Deletes an existing `Session`.
+      operationId: deleteSession
+      responses:
+        204:
+          description: Successful response.
+    parameters:
+    - name: sessionId
+      in: path
+      description: A unique identifier for a `Session`.
+      required: true
+      schema:
+        type: string
+  /users/email/verification/{token}/:
+    description: |-
+      Path that the `user` can reach to verify its email.
+
+      Does not require authentication since it must be reachable from the users.
+    get:
+      summary: Email verification
+      operationId: verifyemail
+      responses:
+        200:
+          description: The verification complete successfully, the verification is
+            now confirmed.
+        404:
+          description: |-
+            The user request to change email, the link is not correct anymore.
+
+            No more info given.
+      security:
+      - PublicKey: []
+    parameters:
+    - name: token
+      in: path
+      description: The token in the email verification
+      required: true
+      schema:
+        format: byte
+        type: string
+  /passwordResets:
+    summary: Path used to manage the list of PasswordResets.
+    description: |-
+      The REST endpoint/path used to list and create zero or more `PasswordReset` entities.  This path contains a `GET` and `POST` operation to perform the list and create tasks, respectively.
+
+      Does not require authentication, since it can be called by the user directly.
+    get:
+      summary: List All PasswordResets
+      description: Gets a list of all `PasswordReset` entities.
+      operationId: getPasswordResets
+      responses:
+        200:
+          description: Successful response - returns an array of `PasswordReset` entities.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PasswordReset'
+      security:
+      - SecretAPI: []
+    post:
+      summary: Create a PasswordReset
+      description: Creates a new instance of a `PasswordReset`.
+      operationId: createPasswordReset
+      requestBody:
+        description: A new `PasswordReset` to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+        required: true
+      responses:
+        201:
+          description: Successful response.
+      security:
+      - PublicKey: []
+  /passwordResets/{token}:
+    summary: Path used to manage a single PasswordReset.
+    description: The REST endpoint/path used to get, update, and delete single instances
+      of an `PasswordReset`.  This path contains `GET`, `PUT`, and `DELETE` operations
+      used to perform the get, update, and delete tasks, respectively.
+    get:
+      summary: Get a PasswordReset
+      description: Gets the details of a single instance of a `PasswordReset`.
+      operationId: getPasswordReset
+      responses:
+        200:
+          description: Successful response - returns a single `PasswordReset`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordReset'
+      security:
+      - SecretAPI: []
+    put:
+      summary: Update a PasswordReset
+      description: Updates an existing `PasswordReset`.
+      operationId: updatePasswordReset
+      requestBody:
+        description: Updated `PasswordReset` information.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+        required: true
+      responses:
+        202:
+          description: Successful response.
+    delete:
+      summary: Delete a PasswordReset
+      description: Deletes an existing `PasswordReset`.
+      operationId: deletePasswordReset
+      responses:
+        204:
+          description: Successful response.
+    parameters:
+    - name: token
+      in: path
+      description: A unique identifier for a `PasswordReset`.
+      required: true
+      schema:
+        type: string
+  /login:
+    post:
+      summary: LogIn the user
+      description: This operation login the user and create a new session.
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        201:
+          description: |-
+            The new session is been created and it is returned to the user the session key and the expiration.
+
+            Cookies are set as well.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/Session'
+        401:
+          description: |+
+            Wrong combination of username and password.
+
+            This code is returned in two cases:
+
+            1. The combination is wrong, existing username but password does not match
+            2. The user does not exists.
+
+      security:
+      - PublicKey: []
+  /resetPassword:
+    post:
+      summary: Reset password from user
+      description: |-
+        The API let the users to reset their password.
+
+        When invoked, the API create a `passwordResets` object and send an email to the user.
+      operationId: resetpassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+        required: true
+      responses:
+        204:
+          description: Always return 204. We don't tell the user if the email is actually
+            registered.
+      security:
+      - PublicKey: []
+  /signup:
+    post:
+      summary: SignUp a new user
+      description: |-
+        This endpoint let a user signup.
+
+        Can be invoked directly by the user.
+      operationId: signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+        required: true
+      responses:
+        204:
+          description: "It does not return any information.\n\nIf the user does not\
+            \ exists, it start the signup process.\nIf the user exists already it\
+            \ simply return.\n\nWe decide to don't return any error in case that the\
+            \ user already exists.\nReturning an error in this case could expose information\
+            \ to other malign actors. "
+      security:
+      - PublicKey: []
+components:
+  schemas:
+    User:
+      title: Root Type for user
+      description: The user resources
+      required:
+      - userId
+      - password
+      - email
+      - salt
+      - storage
+      - crypto
+      - verified_email
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          format: password
+          type: string
+        salt:
+          format: byte
+          description: The salt used for storing the password
+          type: string
+        storage:
+          format: binary
+          description: Simple storage to keep application level info for the user
+          type: string
+        crypto:
+          description: The algorithm used to store the password
+          type: string
+        verified_email:
+          description: If the email is verified by the user
+          type: boolean
+          readOnly: true
+        userId:
+          type: string
+          readOnly: true
+      example:
+        email: some text
+        password: '**********'
+        salt: R28gUGF0cyE=
+        storage: <FILE>
+        crypto: some text
+        verified_email: false
+        userId: some text
+    EmailVerification:
+      description: |
+        A resource that represent an email verification.
+
+        There can be only on of this resource at any given time, if the user ask to
+        change email while the email was not verified, the old resource get deleted.
+      required:
+      - userId
+      - token
+      - email
+      type: object
+      properties:
+        userId:
+          description: The user we are verifying
+          type: string
+        token:
+          format: byte
+          description: A token for the verification
+          type: string
+          readOnly: true
+        email:
+          description: The email we are verifying
+          type: string
+    Session:
+      description: A session for the user
+      required:
+      - userId
+      - sessionKey
+      type: object
+      properties:
+        userId:
+          description: The user id
+          type: string
+        sessionKey:
+          format: byte
+          description: An unique key for each session, readOnly to be set by the server.
+          type: string
+          readOnly: true
+        expiration:
+          format: int64
+          description: |-
+            When the session expires, in timestamp in UTC time zone.
+
+            If no value is provide during the invocation of the API, a default of now() + 24hours is used.
+          type: integer
+      example:
+        userId: some text
+        sessionKey: R28gUGF0cyE=
+        expiration: 1555068983
+    Login:
+      title: Root Type for Login
+      description: Simple Login
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example: |-
+        {
+            "email": "foo@bar.com",
+            "password": "**secret**"
+        }
+    PasswordResetRequest:
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+    PasswordReset:
+      description: Only the last password reset is considered, create a new password
+        reset mean invalidate the old one.
+      required:
+      - userId
+      - token
+      - creation-time
+      - id
+      type: object
+      properties:
+        userId:
+          type: string
+        token:
+          format: byte
+          description: A token for each request of change password
+          type: string
+          readOnly: true
+        creation-time:
+          format: int64
+          description: When the request of change password was generated
+          type: integer
+          readOnly: true
+        id:
+          type: string
+          readOnly: true
+      example:
+        userId: some text
+        token: R28gUGF0cyE=
+        creation-time: 1645518594
+    SignupRequest:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          format: password
+          type: string
+        storage:
+          format: binary
+          type: string
+  securitySchemes:
+    PublicKey:
+      type: apiKey
+      description: Used when the user need to interact directly with the API.
+      name: gluter-public-key
+      in: query
+    SecretAPI:
+      type: apiKey
+      description: Used when is the server code that interact with the API.
+      name: gluter-secret-key
+      in: header
+security:
+- SecretAPI: []
