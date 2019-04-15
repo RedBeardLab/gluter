@@ -37,8 +37,16 @@ info:
     After the login a new session resource is created, cookies are set for your domains and storage information are loaded into the cookie, so they are accessible from client side code.
 
     The **/resetPassword** endpoint allow users to reset their password, also this is possible without touching your servers.
+
+    An user registering with the /signup enpoint will trigger the email verification workflow.
+    While adding an user using the REST POST /user endpoint will not.
+
+    The API is designed on github: https://github.com/RedBeardLab/gluter feel free to open issues and make questions.
+
+    We don't have all the answer we need your help to make this as comfortable and usable for you!
   contact:
     name: Simone
+    url: https://github.com/RedBeardLab/gluter
     email: simone@redbeardlab.com
   version: 1.0.0
 paths:
