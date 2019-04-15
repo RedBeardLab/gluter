@@ -2,7 +2,44 @@
 openapi: 3.0.2
 info:
   title: Gluter
-  description: API for user management
+  description: |-
+    API for user management.
+
+    There are mainly two resources in the API:
+    1. User
+    2. Session
+
+    The **user** resource keep information about a single user.
+
+    It stores the email and password of the user, along with an handy "content" field.
+    The content field is meant to be a JSON string that can be used to store all kind of information that may be useful like Stripes token, plan the user is subscribed, etc...
+
+    The **session** resource keep track of users that are logged in.
+
+    The session key is composed by the ID of the user, a session key, and the expiration of the session itself.
+
+    These two resources (user and session) are exposed as _private REST endpoint_ so it is possible to invoke them only using a server.
+
+    Then, there are other REST endpoints that are _public_, it means that they can be invoked by anyone simply by using your public key.
+    They are meant to be used in client-side code.
+
+    Those public endpoints are:
+    1. /signup
+    2. /login
+    3. /resetPassword
+
+
+    The **/signup** endpoints let your user signup without touching your servers.
+    The user can provide email & password and we will create a new user for you, create a session, log them in, and redirect them to the page you indicate.
+    The same endpoint can also be invoked using JSON in case you want more control.
+
+    The **/login** endpoint allow user to login, again is not necessary to touch your server.
+    After the login a new session resource is created, cookies are set for your domains and storage information are loaded into the cookie, so they are accessible from client side code.
+
+    The **/resetPassword** endpoint allow users to reset their password, also this is possible without touching your servers.
+  contact:
+    name: Simone
+    email: simone@redbeardlab.com
   version: 1.0.0
 paths:
   /users:
@@ -585,10 +622,14 @@ components:
         storage:
           format: binary
           type: string
+        redirect:
+          description: An url where to redirect after the signup
+          type: string
       example:
         email: foo@bar
         password: '**********'
         storage: <FILE>
+        redirect: /#completed-signup
   securitySchemes:
     PublicKey:
       type: apiKey
