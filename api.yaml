@@ -383,16 +383,30 @@ paths:
       description: |-
         This endpoint let a user signup.
 
-        Can be invoked directly by the user.
+        Can be invoked directly by the users.
+
+        If the signup worked successfully, the user is added to the list of users and it starts the email verification process.
       operationId: signup
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/SignupRequest'
+            examples:
+              SignUpJSON:
+                value:
+                  email: foo@bar
+                  password: '**********'
+                  storage: <FILE>
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/SignupRequest'
+            examples:
+              SignUpFORM:
+                value:
+                  email: foo@bar
+                  password: '**********'
+                  storage: <FILE>
         required: true
       responses:
         204:
@@ -442,7 +456,7 @@ components:
           type: string
           readOnly: true
       example:
-        email: some text
+        email: foo@bar
         password: '**********'
         salt: R28gUGF0cyE=
         storage: <FILE>
@@ -472,6 +486,10 @@ components:
         email:
           description: The email we are verifying
           type: string
+      example:
+        userId: some text
+        token: R28gUGF0cyE=
+        email: foo@bar
     Session:
       description: A session for the user
       required:
@@ -522,6 +540,8 @@ components:
       properties:
         email:
           type: string
+      example:
+        email: foo@bar
     PasswordReset:
       description: Only the last password reset is considered, create a new password
         reset mean invalidate the old one.
@@ -565,15 +585,25 @@ components:
         storage:
           format: binary
           type: string
+      example:
+        email: foo@bar
+        password: '**********'
+        storage: <FILE>
   securitySchemes:
     PublicKey:
       type: apiKey
-      description: Used when the user need to interact directly with the API.
+      description: |-
+        Used when the user need to interact directly with the API.
+
+        These keys are public and are only needed to identify your account.
       name: gluter-public-key
       in: query
     SecretAPI:
       type: apiKey
-      description: Used when is the server code that interact with the API.
+      description: |-
+        Used when is the server code that interact with the API.
+
+        These keys are private, should not be shared with anyone, should not be use by client code and should only be used with HTTPS towards Gluter servers.
       name: gluter-secret-key
       in: header
 security:
