@@ -112,8 +112,8 @@ paths:
               $ref: '#/components/schemas/User'
         required: true
       responses:
-        202:
-          description: Successful response.
+        200:
+          description: The user is been updated
     delete:
       summary: Delete a user
       description: Deletes an existing `user`.
