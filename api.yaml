@@ -454,6 +454,10 @@ paths:
       GET is supported.
     get:
       summary: Change expiration of a session
+      description: |-
+        Change the expiration of a session to a different timestamp, always in UTC.
+
+        It is an idempotent method, hence the use of the GET verb.
       operationId: setsessionexpiration
       parameters:
       - name: sessionId
