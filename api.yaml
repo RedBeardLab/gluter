@@ -453,6 +453,8 @@ paths:
     description: This endpoint helps in setting a new expiration for a session, only
       GET is supported.
     get:
+      summary: Change expiration of a session
+      operationId: setsessionexpiration
       parameters:
       - name: sessionId
         in: path
