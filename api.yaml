@@ -223,20 +223,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Session'
-    put:
-      summary: Update a Session
-      description: Updates an existing `Session`.
-      operationId: updateSession
-      requestBody:
-        description: Updated `Session` information.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Session'
-        required: true
-      responses:
-        202:
-          description: Successful response.
     delete:
       summary: Delete a Session
       description: Deletes an existing `Session`.
@@ -462,6 +448,30 @@ paths:
             \ to other malign actors. "
       security:
       - PublicKey: []
+  /session/{sessionId}/set-expiration/{seconds}:
+    summary: Set a new expiration for the session
+    description: This endpoint helps in setting a new expiration for a session, only
+      GET is supported.
+    get:
+      parameters:
+      - name: sessionId
+        in: path
+        description: The ID of the session of which change the expiation
+        required: true
+      - name: seconds
+        in: path
+        description: When the session should expire
+        required: true
+        schema:
+          format: int64
+          type: integer
+      responses:
+        200:
+          description: The expiration of the session has been changed.
+        406:
+          description: You provide an expiration that is already in the past
+      security:
+      - SecretAPI: []
 components:
   schemas:
     User:
